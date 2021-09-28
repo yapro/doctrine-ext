@@ -9,9 +9,15 @@ use Doctrine\ORM\EntityManagerInterface;
 trait ReloadDatabaseTrait
 {
     /*
-     * Do not forgot to init trait`s dependency:
+     * Do not forget to init trait`s dependency:
 
+    protected static EntityManager $dbObjectManager;
 
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::$entityManager = self::$container->get(EntityManagerInterface::class);
+    }
     */
 
     /**
@@ -26,7 +32,9 @@ trait ReloadDatabaseTrait
     {
         // без каскадного удаления вылазит ошибка: SQLSTATE[0A000]: Feature not supported: 7 ERROR:  cannot truncate a
         // table referenced in a foreign key constraint
-        static::$entityManager->getConnection()->exec('SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE ' . $tableName . '; SET FOREIGN_KEY_CHECKS = 1;');
+        static::$entityManager->getConnection()->exec(
+            'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE ' . $tableName . '; SET FOREIGN_KEY_CHECKS = 1;'
+        );
     }
 
     protected function truncateAllTables()
@@ -47,5 +55,15 @@ trait ReloadDatabaseTrait
     protected function truncateClass(string $className)
     {
         static::truncateClassStatic($className);
+    }
+
+    protected static function truncateAllTablesInSqLite()
+    {
+        $sql = '';
+        foreach (self::$entityManager->getConnection()->getSchemaManager()->listTableNames() as $tableName) {
+            $sql .= 'DELETE FROM ' . $tableName . ';';
+            $sql .= 'DELETE FROM SQLITE_SEQUENCE WHERE name="' . $tableName . '";';
+        }
+        static::$entityManager->getConnection()->exec($sql);
     }
 }
