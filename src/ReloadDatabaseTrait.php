@@ -11,12 +11,12 @@ trait ReloadDatabaseTrait
     /*
      * Do not forget to init trait`s dependency:
 
-    protected static EntityManager $dbObjectManager;
+    protected static EntityManagerInterface $entityManager;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$entityManager = self::$container->get(EntityManagerInterface::class);
+        self::$entityManager = static::getContainer()->get(EntityManagerInterface::class);
     }
     */
 
