@@ -9,6 +9,12 @@ composer require yapro/doctrine-ext dev-master
 
 ## Usage
 
+* AutoFillFieldsTrait - for Entities with an auto-generated ID (extends RequiredFieldsTrait)
+* RequiredFieldsTrait - for Entities without an auto-generated ID (fields: createdAt, updatedAt)
+* EntityAutoFillTimeListener - for auto fill fields (createdAt, updatedAt) of any Entities
+* ImportedObjectInterface - for specific auto fill fields (createdAt, updatedAt) of any Entities
+* ReloadDatabaseTrait - for Entities testing / data testing
+
 Example to usage ReloadDatabaseTrait
 ```php
 
