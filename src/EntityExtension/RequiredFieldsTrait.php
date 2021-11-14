@@ -6,7 +6,6 @@ namespace YaPro\DoctrineExt\EntityExtension;
 
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use YaPro\DoctrineExt\Enum\EntityFieldValueEnum;
 
 /**
@@ -21,7 +20,6 @@ trait RequiredFieldsTrait
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="NONE")
-     * @Groups({"apiRead"})
      */
     private ?int $id = EntityFieldValueEnum::DEFAULT_PRIMARY_KEY_NUMBER; // ?int чтобы doctrine не падал при удалении записи
 
