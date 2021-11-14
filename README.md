@@ -43,3 +43,37 @@ class ExampleClassTest extends KernelTestCase
     }
 }
 ```
+* DBALConnectionWrapper - for simple repeat a query for get a number of total rows, example to configure and usage:
+```yaml
+doctrine:
+    dbal:
+        default_connection: my_connection
+        connections:
+            my_connection:
+                wrapper_class: YaPro\DoctrineExt\Wrapping\DBALConnectionWrapper
+                host:     '%env(MYSQL_HOST)%'
+                port:     '%env(MYSQL_PORT)%'
+                dbname:   '%env(MYSQL_DATABASE)%'
+                user:     '%env(MYSQL_USERNAME)%'
+                password: '%env(MYSQL_PASSWORD)%'
+                driver: 'pdo_mysql'
+                server_version: '5'
+```
+Usage:
+```php
+$items = $this->getEntityManager()->getConnection()->fetchAll("
+    SELECT 
+        id,
+        title,
+        createdAt
+    FROM Article
+    WHERE isShow = 1
+    ORDER BY createdAt DESC
+    LIMIT 20, 10
+");
+
+// get the total number of items like: SELECT COUNT(*) FROM Article WHERE isShow = 1
+echo $this->getEntityManager()->getConnection()->fetchColumn(DBALConnectionWrapper::SELECT_FOUND_ROWS);
+// if you use TotalItemsTrait you can call:
+echo $this->getTotalItems();
+```
