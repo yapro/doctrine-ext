@@ -77,3 +77,11 @@ echo $this->getEntityManager()->getConnection()->fetchColumn(DBALConnectionWrapp
 // if you use TotalItemsTrait you can call:
 echo $this->getTotalItems();
 ```
+
+Example to configure EntityAutoFillTimeListener
+```yaml
+    YaPro\DoctrineExt\EventListener\EntityAutoFillTimeListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+```
