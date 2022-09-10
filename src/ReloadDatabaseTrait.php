@@ -6,6 +6,8 @@ namespace YaPro\DoctrineExt;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use function in_array;
+
 trait ReloadDatabaseTrait
 {
     /*
@@ -37,10 +39,13 @@ trait ReloadDatabaseTrait
         );
     }
 
-    protected function truncateAllTables()
+    protected static function truncateAllTables(array $exceptTables = [])
     {
         $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         foreach (self::$entityManager->getConnection()->getSchemaManager()->listTableNames() as $tableName) {
+            if (in_array($tableName, $exceptTables, true)) {
+                continue;
+            }
             $sql .= 'TRUNCATE TABLE ' . $tableName . ';';
         }
         $sql .= 'SET FOREIGN_KEY_CHECKS = 1;';
