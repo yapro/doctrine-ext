@@ -43,6 +43,24 @@ class ExampleClassTest extends KernelTestCase
     }
 }
 ```
+* BigIntType - for native bigint supporting, example to configure:
+```yaml
+doctrine:
+    dbal:
+        types:
+            bigint: YaPro\DoctrineExt\DbalType\BigIntType
+```
+and usage:
+```php
+<?php
+
+namespace App\Entity;
+class MyEntity
+{
+    #[ORM\Column(type: Types::BIGINT)]
+    private int $mybigint = 0;
+```
+
 * DBALConnectionWrapper - for simple repeat a query for get a number of total rows, example to configure and usage:
 ```yaml
 doctrine:
