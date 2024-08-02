@@ -23,7 +23,8 @@
     "doctrine/annotations": "*",
     "symfony/cache": "*",
     "symfony/serializer": "*",
-    "symfony/phpunit-bridge": "*"
+    "symfony/phpunit-bridge": "*",
+    "phpmd/phpmd" : "@stable"
   },
   "autoload": {
     "psr-4": {

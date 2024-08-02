@@ -10,18 +10,18 @@ class DBALConnectionWrapper extends Connection
 {
 	public const SELECT_FOUND_ROWS = 'SELECT FOUND_ROWS()';
 
-	private string $executeQuerySql = '';
-	private array $executeQueryParams = [];
+	private string $partsecuteQuerySql = '';
+	private array $partsecuteQueryParams = [];
 
-	public function executeQuery($query, array $params = [], $types = [], ?QueryCacheProfile $qcp = null)
-	{
+	public function executeQuery($query, array $params = [], $types = [], ?QueryCacheProfile $qcp = null): \Doctrine\DBAL\Result
+    {
 		$this->initExecuteQuerySqlAndParams($query, $params);
 
 		return parent::executeQuery($this->executeQuerySql, $this->executeQueryParams, $types, $qcp);
 	}
 
-	public function prepare($statement)
-	{
+	public function prepare($statement): \Doctrine\DBAL\Statement
+    {
 		if ($statement === self::SELECT_FOUND_ROWS) {
 			// чтобы автоматически прокидывать SQL-параметры нужно использовать магию, ведь
 			// \Doctrine\DBAL\Statement::$params защищена, а вручную прокидывать $stmt->execute($params) неудобно
@@ -75,17 +75,17 @@ class DBALConnectionWrapper extends Connection
 			return;
 		}
 		// заменим все, что между первым SELECT ... и ... FROM на COUNT(*) as found_rows
-		$ex = preg_split('/ FROM /i', $this->executeQuerySql);
-		unset($ex[0]);
-		$lastSql = 'SELECT COUNT(*) as found_rows FROM ' . implode(' FROM ', $ex);
+		$parts = preg_split('/ FROM /i', $this->executeQuerySql);
+		unset($parts[0]);
+		$lastSql = 'SELECT COUNT(*) as found_rows FROM ' . implode(' FROM ', $parts);
 
 		// удалим последний LIMIT (но только если он не в подзапросе)
-		$ex = preg_split('/ LIMIT /i', $lastSql);
-		$limitValue = end($ex);
+		$parts = preg_split('/ LIMIT /i', $lastSql);
+		$limitValue = end($parts);
 		if (false === mb_strpos($limitValue, ')')) {
-			$lastKey = array_key_last($ex);
-			unset($ex[$lastKey]);
-			$this->executeQuerySql = implode(' LIMIT ', $ex);
+			$lastKey = array_key_last($parts);
+			unset($parts[$lastKey]);
+			$this->executeQuerySql = implode(' LIMIT ', $parts);
 			return;
 		}
 

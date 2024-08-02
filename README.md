@@ -128,11 +128,6 @@ XDEBUG_CONFIG="max_nesting_level=200 client_port=9003 client_host=host.docker.in
 vendor/bin/simple-phpunit --cache-result-file=/tmp/phpunit.cache -v --stderr --stop-on-incomplete --stop-on-defect \
 --stop-on-failure --stop-on-warning --fail-on-warning --stop-on-risky --fail-on-risky
 ```
-If you need php7:
-```sh
-docker build -t yapro/doctrine-ext:latest --build-arg "PHP_VERSION=7" -f ./Dockerfile ./
-cp -f composer.lock.php7 composer.lock
-````
 
 Cs-Fixer:
 ```sh
@@ -143,5 +138,5 @@ wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.8.0/php-c
 Update phpmd rules:
 ```shell
 wget https://github.com/phpmd/phpmd/releases/download/2.12.0/phpmd.phar && chmod +x ./phpmd.phar
-./phpmd.phar . text phpmd.xml --exclude .github/workflows,vendor --strict --generate-baseline
+/app/vendor/phpmd/phpmd/src/bin/phpmd . text phpmd.xml --exclude .github/workflows,vendor --strict --generate-baseline
 ```

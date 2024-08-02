@@ -16,9 +16,10 @@ jobs:
     - run: id
     - run: pwd
     - run: docker build -t yapro/doctrine-ext:latest -f ./Dockerfile ./
-    - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest sh -c "COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-scripts --no-interaction"
+    - name: "composer install with dev requirements"
+      run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest sh -c "COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-scripts --no-interaction"
     - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest vendor/bin/simple-phpunit
-    - run: wget https://github.com/phpmd/phpmd/releases/download/2.12.0/phpmd.phar && chmod +x ./phpmd.phar
-    - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest ./phpmd.phar . text phpmd.xml --exclude .github/workflows,vendor --strict
+    - name: "php md"
+      run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest /app/vendor/phpmd/phpmd/src/bin/phpmd . text phpmd.xml --exclude .github/workflows,vendor --strict
     - run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.8.0/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
     - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest ./php-cs-fixer.phar fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation --using-cache=no --allow-risky=yes --diff
