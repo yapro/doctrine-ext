@@ -10,39 +10,29 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity()]
 class Article
 {
-	/**
-	 * @var ?int
-	 *
-	 * @ORM\Id
-	 * @ORM\Column(type="integer")
-	 * @ORM\GeneratedValue(strategy="IDENTITY")
-	 */
     #[Groups(['publicGroup'])]
-	private ?int $id = 0; // ?int чтобы doctrine не падал при удалении записи
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy:"IDENTITY")]
+    #[ORM\Column]
+    protected ?int $id = null; // ?int чтобы doctrine не падал при удалении записи
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column]
     #[Groups(['publicGroup'])]
     private int $parentId = 0;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(['publicGroup'])]
     private string $title = '';
 
     /**
-     * @var Collection|Comment[]
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="article", cascade={"persist"}, orphanRemoval=false)
+     * @var Collection|ArrayCollection|Comment[]
      */
     #[MaxDepth(1)]
     #[Groups(['publicGroup'])]
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, cascade: ['persist'], orphanRemoval: false)]
     private Collection $comments;
 
     public function __construct()
@@ -50,7 +40,7 @@ class Article
         $this->comments = new ArrayCollection();
     }
 
-	public function getId(): int
+	public function getId(): ?int
 	{
 		return $this->id;
 	}

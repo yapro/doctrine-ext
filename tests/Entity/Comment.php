@@ -4,43 +4,32 @@ declare(strict_types=1);
 
 namespace YaPro\DoctrineExt\Tests\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity()]
 class Comment
 {
-	/**
-	 * @var ?int
-	 *
-	 * @ORM\Id
-	 * @ORM\Column(type="integer")
-	 * @ORM\GeneratedValue(strategy="IDENTITY")
-	 */
     #[Groups(['publicGroup'])]
-	private ?int $id = 0; // ?int чтобы doctrine не падал при удалении записи
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy:"IDENTITY")]
+    #[ORM\Column]
+    protected ?int $id = null; // ?int чтобы doctrine не падал при удалении записи
 
-    /**
-     * @ORM\Column(type="integer")
-     */
     #[Groups(['publicGroup'])]
+    #[ORM\Column()]
     private int $parentId = 0;
 
-	/**
-	 * @ORM\Column(type="text")
-	 */
     #[Groups(['publicGroup'])]
+    #[ORM\Column(type: Types::TEXT)]
 	private string $message;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Article", inversedBy="comments")
-     * @ORM\JoinColumn(name="articleId", nullable=false, onDelete="RESTRICT")
-     */
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(name:"articleId", nullable: false, onDelete: 'RESTRICT')]
     private Article $article;
 
-	public function getId(): int
+	public function getId(): ?int
 	{
 		return $this->id;
 	}

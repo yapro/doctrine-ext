@@ -5,6 +5,9 @@ namespace YaPro\DoctrineExt\Tests\Functional;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\Deprecations\Deprecation;
+use Doctrine\ORM\ORMSetup;
 use PHPUnit\Framework\TestCase;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,7 +42,10 @@ class SimpleHydratorTest extends TestCase
 		$proxyDir = null;
 		$cache = null;
 		$useSimpleAnnotationReader = false;
-		$config = Setup::createAnnotationMetadataConfiguration($entities, $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
+		// $config = ORMSetup::createAnnotationMetadataConfiguration($entities, $isDevMode, $proxyDir, $cache, $useSimpleAnnotationReader);
+        $reportFieldsWhereDeclared = true;
+        $config = ORMSetup::createAttributeMetadataConfiguration($entities, $isDevMode, $proxyDir, $cache, $reportFieldsWhereDeclared);
+        $config->setLazyGhostObjectEnabled(true); // чтобы не срабатывал Deprecation::trigger про https://github.com/doctrine/orm/pull/10837/
 		// database configuration parameters
 		$dbPath = __DIR__ . '/../../vendor/bin/db.sqlite';
 		touch($dbPath);
@@ -49,8 +55,9 @@ class SimpleHydratorTest extends TestCase
 			'driver' => 'pdo_sqlite',
 			'path' => $dbPath,
 		);
+        $connection = DriverManager::getConnection($conn, $config);
 		// obtaining the entity manager
-		return EntityManager::create($conn, $config);
+		return new EntityManager($connection, $config);
 	}
 
 	private function createSchema()
@@ -83,9 +90,9 @@ class SimpleHydratorTest extends TestCase
 		/** @var Article $object */
 		$object = self::$SimpleHydrator->fromJson(Article::class, $json);
 		$assert($object);
-		$this->assertTrue($object->getId() === 0);
-		$this->assertTrue($object->getComments()->first()->getId() === 0);
-		$this->assertTrue($object->getComments()->last()->getId() === 0);
+		$this->assertTrue($object->getId() === null);
+		$this->assertTrue($object->getComments()->first()->getId() === null);
+		$this->assertTrue($object->getComments()->last()->getId() === null);
 		$this->createSchema();
 		self::$entityManager->persist($object);
 		self::$entityManager->flush();
@@ -207,7 +214,7 @@ class SimpleHydratorTest extends TestCase
 		$object = self::$SimpleHydrator->fromJson(Article::class, $json, $article->getId());
 		$assert($object);
 		$this->assertTrue($object->getComments()->count() === 1);
-		$this->assertTrue($object->getComments()->last()->getId() === 0);
+		$this->assertTrue($object->getComments()->last()->getId() === null);
 		self::$entityManager->flush();
 		$this->assertTrue($object->getComments()->last()->getId() === 3);
 		self::$entityManager->refresh($object);
