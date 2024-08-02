@@ -21,5 +21,5 @@ jobs:
     - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest vendor/bin/simple-phpunit
     - name: "php md"
       run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest /app/vendor/phpmd/phpmd/src/bin/phpmd . text phpmd.xml --exclude .github/workflows,vendor --strict
-    - run: wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.8.0/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
+    - run: wget https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/download/v3.61.1/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
     - run: docker run --rm --user=$(id -u):$(id -g) -v $(pwd):/app -w /app yapro/doctrine-ext:latest ./php-cs-fixer.phar fix --config=.php-cs-fixer.dist.php -v --dry-run --stop-on-violation --using-cache=no --allow-risky=yes --diff
