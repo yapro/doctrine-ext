@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": ">=8.0",
-    "doctrine/orm": ">=3.0",
+    "doctrine/orm": "*",
     "yapro/helpers": "*"
   },
   "require-dev": {

@@ -1,23 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace YaPro\DoctrineExt\Hydrator;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Exception;
 
 class ArrayHydrator
 {
     /**
      * The keys in the data array are entity field names
      */
-    const HYDRATE_BY_FIELD = 1;
+    public const HYDRATE_BY_FIELD = 1;
 
     /**
      * The keys in the data array are database column names
      */
-    const HYDRATE_BY_COLUMN = 2;
+    public const HYDRATE_BY_COLUMN = 2;
 
     /**
      * @var EntityManagerInterface
@@ -57,27 +58,29 @@ class ArrayHydrator
     }
 
     /**
-     * @param $entity
+     * @param       $entity
      * @param array $data
+     *
      * @return mixed|object
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function hydrate($entity, array $data)
     {
         if (is_string($entity) && class_exists($entity)) {
-            $entity = new $entity;
-        }
-        elseif (!is_object($entity)) {
-            throw new Exception('Entity passed to ArrayHydrator::hydrate() must be a class name or entity object');
+            $entity = new $entity();
+        } elseif (!is_object($entity)) {
+            throw new \Exception('Entity passed to ArrayHydrator::hydrate() must be a class name or entity object');
         }
 
         $entity = $this->hydrateProperties($entity, $data);
         $entity = $this->hydrateAssociations($entity, $data);
+
         return $entity;
     }
 
     /**
-     * @param boolean $hydrateAssociationReferences
+     * @param bool $hydrateAssociationReferences
      */
     public function setHydrateAssociationReferences($hydrateAssociationReferences)
     {
@@ -102,7 +105,8 @@ class ArrayHydrator
 
     /**
      * @param object $entity the doctrine entity
-     * @param array $data
+     * @param array  $data
+     *
      * @return object
      */
     protected function hydrateProperties($entity, $data)
@@ -110,7 +114,7 @@ class ArrayHydrator
         $reflectionObject = new \ReflectionObject($entity);
 
         $metaData = $this->entityManager->getClassMetadata(get_class($entity));
-        
+
         $platform = $this->entityManager->getConnection()
                                         ->getDatabasePlatform();
 
@@ -137,6 +141,7 @@ class ArrayHydrator
     /**
      * @param $entity
      * @param $data
+     *
      * @return mixed
      */
     protected function hydrateAssociations($entity, $data)
@@ -145,11 +150,11 @@ class ArrayHydrator
         foreach ($metaData->associationMappings as $fieldName => $mapping) {
             $associationData = $this->getAssociatedId($fieldName, $mapping, $data);
             if (!empty($associationData)) {
-                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_ONE, ClassMetadataInfo::MANY_TO_ONE])) {
+                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_ONE, ClassMetadataInfo::MANY_TO_ONE], true)) {
                     $entity = $this->hydrateToOneAssociation($entity, $fieldName, $mapping, $associationData);
                 }
 
-                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_MANY, ClassMetadataInfo::MANY_TO_MANY])) {
+                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_MANY, ClassMetadataInfo::MANY_TO_MANY], true)) {
                     $entity = $this->hydrateToManyAssociation($entity, $fieldName, $mapping, $associationData);
                 }
             }
@@ -162,15 +167,14 @@ class ArrayHydrator
      * Retrieves the associated entity's id from $data
      *
      * @param string $fieldName name of field that stores the associated entity
-     * @param array $mapping doctrine's association mapping array for the field
-     * @param array $data the hydration data
+     * @param array  $mapping   doctrine's association mapping array for the field
+     * @param array  $data      the hydration data
      *
      * @return mixed null, if the association is not found
      */
     protected function getAssociatedId($fieldName, $mapping, $data)
     {
         if ($this->hydrateBy === self::HYDRATE_BY_FIELD) {
-
             return isset($data[$fieldName]) ? $data[$fieldName] : null;
         }
 
@@ -192,6 +196,7 @@ class ArrayHydrator
      * @param $propertyName
      * @param $mapping
      * @param $value
+     *
      * @return mixed
      */
     protected function hydrateToOneAssociation($entity, $propertyName, $mapping, $value)
@@ -211,6 +216,7 @@ class ArrayHydrator
      * @param $propertyName
      * @param $mapping
      * @param $value
+     *
      * @return mixed
      */
     protected function hydrateToManyAssociation($entity, $propertyName, $mapping, $value)
@@ -222,8 +228,7 @@ class ArrayHydrator
         foreach ($values as $value) {
             if (is_array($value)) {
                 $assocationObjects[] = $this->hydrate($mapping['targetEntity'], $value);
-            }
-            elseif ($associationObject = $this->fetchAssociationEntity($mapping['targetEntity'], $value)) {
+            } elseif ($associationObject = $this->fetchAssociationEntity($mapping['targetEntity'], $value)) {
                 $assocationObjects[] = $associationObject;
             }
         }
@@ -234,10 +239,11 @@ class ArrayHydrator
     }
 
     /**
-     * @param $entity
-     * @param $propertyName
-     * @param $value
+     * @param      $entity
+     * @param      $propertyName
+     * @param      $value
      * @param null $reflectionObject
+     *
      * @return mixed
      */
     protected function setProperty($entity, $propertyName, $value, $reflectionObject = null)
@@ -246,13 +252,16 @@ class ArrayHydrator
         $property = $reflectionObject->getProperty($propertyName);
         $property->setAccessible(true);
         $property->setValue($entity, $value);
+
         return $entity;
     }
 
     /**
      * @param $className
      * @param $id
-     * @return bool|\Doctrine\Common\Proxy\Proxy|null|object
+     *
+     * @return bool|\Doctrine\Common\Proxy\Proxy|object|null
+     *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\TransactionRequiredException

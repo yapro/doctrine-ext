@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace YaPro\DoctrineExt\Hydrator;
 
 /**
  * Json API Request Doctrine Hydrator
- * @link http://jsonapi.org/format/#document-resource-objects
+ *
+ * @see http://jsonapi.org/format/#document-resource-objects
  */
 class JsonApiHydrator extends ArrayHydrator
 {
@@ -30,6 +33,7 @@ class JsonApiHydrator extends ArrayHydrator
      * @param array  $data
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     protected function hydrateAssociations($entity, $data)
