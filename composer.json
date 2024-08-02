@@ -14,8 +14,7 @@
   ],
   "require": {
     "php": ">=8.0",
-    "doctrine/orm": "*",
-    "pmill/doctrine-array-hydrator": "^0.1.7",
+    "doctrine/orm": ">=3.0",
     "yapro/helpers": "*"
   },
   "require-dev": {
@@ -35,6 +34,5 @@
     "psr-4": {
       "YaPro\\DoctrineExt\\Tests\\": "tests/"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }

@@ -1,0 +1,12 @@
+name: Add Tags
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  auto-tag:
+    uses: yapro/doctrine-ext/.github/workflows/add_tags.yml@master
+    with:
+      version: "2.0"

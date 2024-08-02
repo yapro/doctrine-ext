@@ -6,8 +6,8 @@ namespace YaPro\DoctrineExt\Hydrator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use pmill\Doctrine\Hydrator\ArrayHydrator;
 use YaPro\Helper\JsonHelper;
 
 class SimpleHydrator extends ArrayHydrator
@@ -133,11 +133,11 @@ class SimpleHydrator extends ArrayHydrator
                 $associationData = $this->getAssociatedId($fieldName, $mapping, $data);
             }
             if (!empty($associationData)) {
-                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_ONE, ClassMetadataInfo::MANY_TO_ONE], true)) {
+                if (in_array($mapping['type'], [ClassMetadata::ONE_TO_ONE, ClassMetadata::MANY_TO_ONE], true)) {
                     $entity = $this->hydrateToOneAssociation($entity, $fieldName, $mapping, $associationData);
                 }
 
-                if (in_array($mapping['type'], [ClassMetadataInfo::ONE_TO_MANY, ClassMetadataInfo::MANY_TO_MANY], true)) {
+                if (in_array($mapping['type'], [ClassMetadata::ONE_TO_MANY, ClassMetadata::MANY_TO_MANY], true)) {
                     $entity = $this->hydrateToManyAssociation($entity, $fieldName, $mapping, $associationData);
                 }
             }
