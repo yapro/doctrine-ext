@@ -7,7 +7,6 @@ namespace YaPro\DoctrineExt\Hydrator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use YaPro\Helper\JsonHelper;
 
 class SimpleHydrator extends ArrayHydrator

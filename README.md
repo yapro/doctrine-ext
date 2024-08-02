@@ -2,6 +2,8 @@
 
 ![lib tests](https://github.com/yapro/doctrine-ext/actions/workflows/main.yml/badge.svg)
 
+This is a library for resolving common doctrine problems.
+
 ## Installation
 
 Add as a requirement in your `composer.json` file or run
@@ -14,15 +16,74 @@ As dev:
 composer require apro/doctrine-ext dev-master
 ```
 
-Doctrine ORM v.2 is not supported after removing the [pmill/doctrine-array-hydrator](https://github.com/yapro/doctrine-ext/commit/efe74ed4df79f7450ff2e437cdab5e1ee3afae2a#diff-d2ab9925cad7eac58e0ff4cc0d251a937ecf49e4b6bf57f8b95aab76648a9d34L18) dependency.
+## What inside
 
-## Usage
+1. Array to Doctrine Entity Hydrator
+2. BigIntType - for native bigint supporting
+3. ReloadDatabaseTrait - for Entities testing / data testing
+4. EntityShouldToInvokeParentConstructTest - a test that verifies your entity that extending other class
+5. EntityAutoFillTimeListener - for autofill fields (createdAt, updatedAt) of any Entities
+6. ImportedObjectInterface - for specific autofill fields (createdAt, updatedAt) of any Entities
+7. RequiredFieldsTrait - for Entities without an auto-generated ID (fields: createdAt, updatedAt)
+8. AutoIdAndRequiredFieldsTrait - for Entities with an auto-generated ID (extends RequiredFieldsTrait)
 
-* AutoFillFieldsTrait - for Entities with an auto-generated ID (extends RequiredFieldsTrait)
-* RequiredFieldsTrait - for Entities without an auto-generated ID (fields: createdAt, updatedAt)
-* EntityAutoFillTimeListener - for auto fill fields (createdAt, updatedAt) of any Entities
-* ImportedObjectInterface - for specific auto fill fields (createdAt, updatedAt) of any Entities
-* ReloadDatabaseTrait - for Entities testing / data testing
+### Array to Doctrine Entity Hydrator
+
+You can populate this doctrine entity object with an array, for example:
+
+```PHP
+$data = [
+    'name'        => 'Fred Jones',
+    'email'       => 'fred@example.com',
+    'company'     => 2,
+    'permissions' => [1, 2, 3, 4]
+];
+
+$hydrator = new \YaPro\DoctrineExt\Hydrator\ArrayHydrator($entityManager);
+$entity   = $hydrator->hydrate('App\Entity\User', $data);
+```
+
+You can even populate user with JSON API resource data ( [documentation](http://jsonapi.org/format/#document-resource-objects) )
+```PHP
+$data = [
+    'attributes'    => [
+        'name'  => 'Fred Jones',
+        'email' => 'fred@example.com',
+    ],
+    'relationships' => [
+        'company'     => [
+            'data' => ['id' => 1, 'type' => 'company'],
+        ],
+        'permissions' => [
+            'data' => [
+                ['id' => 1, 'type' => 'permission'],
+                ['id' => 2, 'type' => 'permission'],
+                ['id' => 3, 'type' => 'permission'],
+                ['id' => 4, 'type' => 'permission'],
+                ['name' => 'New permission']
+            ]
+        ]
+    ]
+];
+    
+$hydrator = new \YaPro\DoctrineExt\Hydrator\JsonApiHydrator($entityManager);
+$entity   = $hydrator->hydrate('App\Entity\User', $data);
+```
+or like that:
+```php
+$json = '{
+   "parentId": 12, 
+   "title": "title1", 
+   "comments": [{"parentId": 23, "message": "str1"}, {"parentId": 34, "message": "str2"}]
+}';
+$hydrator = new \YaPro\DoctrineExt\Hydrator\SimpleHydrator($entityManager, new \YaPro\Helper\JsonHelper());
+$entity   = $hydrator->fromJson(Article::class, $json);
+```
+See [more examples](tests/Functional/SimpleHydratorTest.php)
+
+Notice: Doctrine ORM v2 is not supported after removing the [pmill/doctrine-array-hydrator](https://github.com/yapro/doctrine-ext/commit/efe74ed4df79f7450ff2e437cdab5e1ee3afae2a#diff-d2ab9925cad7eac58e0ff4cc0d251a937ecf49e4b6bf57f8b95aab76648a9d34L18) dependency.
+
+### ReloadDatabaseTrait
 
 Example to usage ReloadDatabaseTrait
 ```php
@@ -52,7 +113,10 @@ class ExampleClassTest extends KernelTestCase
     }
 }
 ```
-* BigIntType - for native bigint supporting, example to configure:
+
+### BigIntType
+
+BigIntType - native php bigint supporting, example to configure:
 ```yaml
 doctrine:
     dbal:
@@ -70,7 +134,9 @@ class MyEntity
     private int $mybigint = 0;
 ```
 
-* DBALConnectionWrapper - for simple repeat a query for get a number of total rows, example to configure and usage:
+### DBALConnectionWrapper
+
+Simple way to repeat a query for get a number of total rows, example to configure and usage:
 ```yaml
 doctrine:
     dbal:
