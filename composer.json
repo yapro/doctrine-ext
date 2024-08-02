@@ -13,12 +13,27 @@
     }
   ],
   "require": {
-    "php": ">=7.0.0",
-    "doctrine/orm": "*"
+    "php": ">=8.0",
+    "doctrine/orm": "*",
+    "pmill/doctrine-array-hydrator": "^0.1.7",
+    "yapro/helpers": "*"
+  },
+  "require-dev": {
+    "ext-pdo_sqlite": "*",
+    "doctrine/annotations": "*",
+    "symfony/cache": "*",
+    "symfony/serializer": "*",
+    "symfony/phpunit-bridge": "*"
   },
   "autoload": {
     "psr-4": {
       "YaPro\\DoctrineExt\\": "src/"
     }
-  }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "YaPro\\DoctrineExt\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev"
 }

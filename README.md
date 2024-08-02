@@ -1,10 +1,17 @@
 # Doctrine extensions
 
+![lib tests](https://github.com/yapro/doctrine-ext/actions/workflows/main.yml/badge.svg)
+
 ## Installation
 
 Add as a requirement in your `composer.json` file or run
 ```sh
-composer require yapro/doctrine-ext dev-master
+composer require yapro/doctrine-ext
+```
+
+As dev:
+```sh
+composer require apro/doctrine-ext dev-master
 ```
 
 ## Usage
@@ -102,4 +109,39 @@ Example to configure EntityAutoFillTimeListener
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
+```
+
+Dev
+------------
+```sh
+docker build -t yapro/doctrine-ext:latest -f ./Dockerfile ./
+docker run --rm --user=$(id -u):$(id -g) --add-host=host.docker.internal:host-gateway -it --rm -v $(pwd):/app -w /app yapro/doctrine-ext:latest bash
+cp -f composer.lock.php8 composer.lock
+composer install -o
+```
+Debug tests:
+```sh
+PHP_IDE_CONFIG="serverName=common" \
+XDEBUG_SESSION=common \
+XDEBUG_MODE=debug \
+XDEBUG_CONFIG="max_nesting_level=200 client_port=9003 client_host=host.docker.internal" \
+vendor/bin/simple-phpunit --cache-result-file=/tmp/phpunit.cache -v --stderr --stop-on-incomplete --stop-on-defect \
+--stop-on-failure --stop-on-warning --fail-on-warning --stop-on-risky --fail-on-risky
+```
+If you need php7:
+```sh
+docker build -t yapro/doctrine-ext:latest --build-arg "PHP_VERSION=7" -f ./Dockerfile ./
+cp -f composer.lock.php7 composer.lock
+````
+
+Cs-Fixer:
+```sh
+wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.8.0/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
+./php-cs-fixer.phar fix --config=.php-cs-fixer.dist.php -v --using-cache=no --allow-risky=yes
+```
+
+Update phpmd rules:
+```shell
+wget https://github.com/phpmd/phpmd/releases/download/2.12.0/phpmd.phar && chmod +x ./phpmd.phar
+./phpmd.phar . text phpmd.xml --exclude .github/workflows,vendor --strict --generate-baseline
 ```
