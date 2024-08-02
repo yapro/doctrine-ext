@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace YaPro\DoctrineExt\TestExt;
 
 use Doctrine\ORM\EntityManagerInterface;
-use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EntityShouldToInvokeParentConstructTest extends KernelTestCase
@@ -40,7 +39,7 @@ class EntityShouldToInvokeParentConstructTest extends KernelTestCase
             }
 
             // находим имя самого дочернего класса имеющего метод __construct
-            $reflectionMethod = new ReflectionMethod($className, '__construct');
+            $reflectionMethod = new \ReflectionMethod($className, '__construct');
             if ($className === $reflectionMethod->getDeclaringClass()->getName()) {
                 $methodSource = $this->getMethodSource($reflectionMethod);
                 $this->assertStringContainsString(
@@ -53,11 +52,11 @@ class EntityShouldToInvokeParentConstructTest extends KernelTestCase
     }
 
     /**
-     * @param ReflectionMethod $reflectionMethod
+     * @param \ReflectionMethod $reflectionMethod
      *
      * @return string
      */
-    private function getMethodSource(ReflectionMethod $reflectionMethod): string
+    private function getMethodSource(\ReflectionMethod $reflectionMethod): string
     {
         $fileContent = file($reflectionMethod->getFileName());
         $firstLine = $reflectionMethod->getStartLine();

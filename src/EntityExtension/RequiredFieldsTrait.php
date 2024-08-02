@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace YaPro\DoctrineExt\EntityExtension;
 
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use YaPro\DoctrineExt\Enum\EntityFieldValueEnum;
 
@@ -18,7 +17,9 @@ trait RequiredFieldsTrait
 {
     /**
      * @ORM\Id
+     *
      * @ORM\Column(type="integer")
+     *
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private ?int $id = EntityFieldValueEnum::DEFAULT_PRIMARY_KEY_NUMBER; // ?int чтобы doctrine не падал при удалении записи
@@ -28,14 +29,14 @@ trait RequiredFieldsTrait
      *
      * @ORM\Column(type="datetime", nullable=false, options={"default": "CURRENT_TIMESTAMP"})
      */
-    private ?DateTimeInterface $createdAt = null;
+    private ?\DateTimeInterface $createdAt = null;
 
     /**
      * Поле заполняется автоматически перед onFlush.
      *
      * @ORM\Column(type="datetime", nullable=false, options={"default": "CURRENT_TIMESTAMP"})
      */
-    private ?DateTimeInterface $updatedAt = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function getId(): int
     {
@@ -49,24 +50,24 @@ trait RequiredFieldsTrait
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): ?DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setCreatedAt(DateTimeInterface $dateTime): self
+    public function setCreatedAt(\DateTimeInterface $dateTime): self
     {
         $this->createdAt = $dateTime;
 
         return $this;
     }
 
-    public function setUpdatedAt(DateTimeInterface $dateTime): self
+    public function setUpdatedAt(\DateTimeInterface $dateTime): self
     {
         $this->updatedAt = $dateTime;
 

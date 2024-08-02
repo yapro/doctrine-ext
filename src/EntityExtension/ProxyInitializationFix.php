@@ -20,7 +20,7 @@ trait ProxyInitializationFix
      * @return array
      */
     // 7.4.6 вышел, по идее данный хак теперь не потребуется: https://www.php.net/ChangeLog-7.php#7.4.6
-	// Fixed bug #79447 (Serializing uninitialized typed properties with __sleep should not throw).
+    // Fixed bug #79447 (Serializing uninitialized typed properties with __sleep should not throw).
     public function __sleep()
     {
         return [];

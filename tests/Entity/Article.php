@@ -7,15 +7,15 @@ namespace YaPro\DoctrineExt\Tests\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity()]
 class Article
 {
     #[Groups(['publicGroup'])]
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy:"IDENTITY")]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column]
     protected ?int $id = null; // ?int чтобы doctrine не падал при удалении записи
 
@@ -40,21 +40,22 @@ class Article
         $this->comments = new ArrayCollection();
     }
 
-	public function getId(): ?int
-	{
-		return $this->id;
-	}
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-	public function getParentId(): int
-	{
-		return $this->parentId;
-	}
+    public function getParentId(): int
+    {
+        return $this->parentId;
+    }
 
-	public function setParentId(int $parentId): self
-	{
-		$this->parentId = $parentId;
-		return $this;
-	}
+    public function setParentId(int $parentId): self
+    {
+        $this->parentId = $parentId;
+
+        return $this;
+    }
 
     public function addComment(Comment $comment, bool $updateRelation = true): self
     {
@@ -65,15 +66,17 @@ class Article
         if ($updateRelation) {
             $comment->setArticle($this, false);
         }
+
         return $this;
     }
 
     public function removeComment(Comment $comment, bool $updateRelation = true): self
     {
         $this->comments->removeElement($comment);
-        //if ($updateRelation) {
+
+        // if ($updateRelation) {
         //    $comment->setArticle(null, false);
-        //}
+        // }
         return $this;
     }
 

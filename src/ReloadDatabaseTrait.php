@@ -6,8 +6,6 @@ namespace YaPro\DoctrineExt;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-use function in_array;
-
 trait ReloadDatabaseTrait
 {
     /*
@@ -43,7 +41,7 @@ trait ReloadDatabaseTrait
     {
         $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         foreach (self::$entityManager->getConnection()->getSchemaManager()->listTableNames() as $tableName) {
-            if (in_array($tableName, $exceptTables, true)) {
+            if (\in_array($tableName, $exceptTables, true)) {
                 continue;
             }
             $sql .= 'TRUNCATE TABLE ' . $tableName . ';';

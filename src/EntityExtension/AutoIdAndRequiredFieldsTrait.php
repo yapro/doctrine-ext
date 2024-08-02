@@ -15,7 +15,9 @@ trait AutoIdAndRequiredFieldsTrait
      * Переопределяем id из RequiredFieldsTrait чтобы установить GeneratedValue strategy в IDENTITY.
      *
      * @ORM\Id
+     *
      * @ORM\Column(type="integer")
+     *
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private ?int $id = EntityFieldValueEnum::DEFAULT_PRIMARY_KEY_NUMBER; // ?int чтобы doctrine не падал при удалении записи

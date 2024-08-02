@@ -131,7 +131,7 @@ vendor/bin/simple-phpunit --cache-result-file=/tmp/phpunit.cache -v --stderr --s
 
 Cs-Fixer:
 ```sh
-wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.8.0/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
+wget https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/releases/download/v3.61.1/php-cs-fixer.phar && chmod +x ./php-cs-fixer.phar
 ./php-cs-fixer.phar fix --config=.php-cs-fixer.dist.php -v --using-cache=no --allow-risky=yes
 ```
 
