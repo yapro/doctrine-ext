@@ -14,6 +14,8 @@ As dev:
 composer require apro/doctrine-ext dev-master
 ```
 
+Doctrine ORM v.2 is not supported after removing the [pmill/doctrine-array-hydrator](https://github.com/yapro/doctrine-ext/commit/efe74ed4df79f7450ff2e437cdab5e1ee3afae2a#diff-d2ab9925cad7eac58e0ff4cc0d251a937ecf49e4b6bf57f8b95aab76648a9d34L18) dependency.
+
 ## Usage
 
 * AutoFillFieldsTrait - for Entities with an auto-generated ID (extends RequiredFieldsTrait)
